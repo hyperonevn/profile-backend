@@ -1,0 +1,13 @@
+{
+  "name": "profile-backend",
+  "version": "1.0.0",
+  "description": "Dynamic profile subdomain system for profile.io.vn",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.80.0"
+  }
+}
