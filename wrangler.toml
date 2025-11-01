@@ -1,0 +1,8 @@
+name = "profile-backend"
+main = "src/index.js"
+compatibility_date = "2025-11-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hyperme"
+database_id = "<17f1ae91-9fac-41cc-8b41-46659aa66bde>"
