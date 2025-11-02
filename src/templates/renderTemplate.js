@@ -157,12 +157,12 @@ export function renderTemplate(profile) {
       <div class="cover"></div>
       <div class="overlay"></div>
       <div class="content">
-        <img src="${profile.image}" alt="${profile.full_name}" class="avatar" />
+        <img src="${profile.image}" alt="${profile.roles}" class="avatar" />
         <h1>${profile.full_name}</h1>
         <p class="sub">${profile.position}</p>
         <p class="company">${profile.company_bold}</p>
         <p class="roles">${profile.roles}</p>
-        <p class="intro">“${profile.intro}”</p>
+        <p class="intro">“${profile.roles}”</p>
 
         <div class="links">
           <a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>
