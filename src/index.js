@@ -1,4 +1,4 @@
-import { renderTemplate } from './templates/renderTemplate.js';
+import { renderTemplate } from '../templates/renderTemplate.js';
 
 export default {
   async fetch(request, env) {
