@@ -2,21 +2,17 @@ name = "profile-backend"
 main = "src/index.js"
 compatibility_date = "2025-11-01"
 
-# D1 database
 [[d1_databases]]
-binding = "DB"
+binding = "profile_db"
 database_name = "hyperme"
 database_id = "17f1ae91-9fac-41cc-8b41-46659aa66bde"
 
-# R2 bucket cho hệ thống profile
 [[r2_buckets]]
 binding = "PROFILE_BUCKET"
 bucket_name = "profile-storage"
 
-# ✅ Route động (subdomain wildcard)
 routes = [
   { pattern = "*.profile.io.vn", custom_domain = true }
 ]
 
-# ✅ Tail logs để debug
 logpush = true
