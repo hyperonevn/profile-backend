@@ -1,16 +1,17 @@
 // /profile-backend/templates/renderTemplate.js
-export function renderTemplate(profile) {
+export function renderTemplate(profile = {}) {
   const socials = profile.socials || {};
-  const languages = profile.language?.length ? profile.language.join(", ") : "";
+  const languages = Array.isArray(profile.language) && profile.language.length
+    ? profile.language.join(", ")
+    : "";
 
-  return `
-  <!DOCTYPE html>
+  return `<!DOCTYPE html>
   <html lang="vi">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${profile.full_name || profile.name} | ${profile.position}</title>
-    <meta name="description" content="${profile.intro || ''}" />
+    <title>${profile.full_name || profile.name || "Hồ sơ cá nhân"} | ${profile.position || ""}</title>
+    <meta name="description" content="${profile.intro || ""}" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -36,7 +37,7 @@ export function renderTemplate(profile) {
       .cover {
         position: absolute;
         inset: 0;
-        background-image: url('${profile.cover}');
+        background-image: url('${profile.cover || ""}');
         background-size: cover;
         background-position: center;
         filter: brightness(0.55);
@@ -157,29 +158,25 @@ export function renderTemplate(profile) {
       <div class="cover"></div>
       <div class="overlay"></div>
       <div class="content">
-        <img src="${profile.image}" alt="${profile.full_name}" class="avatar" />
-        <h1>${profile.full_name}</h1>
-        <p class="sub">${profile.position}</p>
-        <p class="company">${profile.company_bold}</p>
-        <p class="roles">${profile.roles}</p>
-        <p class="intro">“${profile.intro}”</p>
-
+        <img src="${profile.image || ""}" alt="${profile.full_name || ""}" class="avatar" />
+        <h1>${profile.full_name || ""}</h1>
+        <p class="sub">${profile.position || ""}</p>
+        <p class="company">${profile.company_bold || ""}</p>
+        <p class="roles">${profile.roles || ""}</p>
+        ${profile.intro ? `<p class="intro">“${profile.intro}”</p>` : ""}
         <div class="links">
-          <a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>
+          ${profile.domain ? `<a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>` : ""}
           ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
           ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
         </div>
-
         <div class="socials">
-          ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"/></a>` : ""}
-          ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"/></a>` : ""}
+          ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"/></a>` : ""}
+          ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"/></a>` : ""}
         </div>
-
         <div class="qr">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://${profile.domain}" alt="QR Code" />
+          ${profile.domain ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://${profile.domain}" alt="QR Code" />` : ""}
           <p style="font-size:9px;color:#aaa;margin-top:4px;">Quét để xem hồ sơ</p>
         </div>
-
         <footer>
           ${profile.location ? `<p>${profile.location}</p>` : ""}
           ${languages ? `<p>Ngôn ngữ: ${languages}</p>` : ""}
