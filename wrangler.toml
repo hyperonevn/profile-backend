@@ -13,11 +13,10 @@ database_id = "17f1ae91-9fac-41cc-8b41-46659aa66bde"
 binding = "PROFILE_BUCKET"
 bucket_name = "profile-storage"
 
-# Route động (subdomain wildcard)
-# Cho phép tất cả {subdomain}.profile.io.vn đều trỏ về Worker này
+# ✅ Route động (subdomain wildcard)
 routes = [
   { pattern = "*.profile.io.vn", custom_domain = true }
 ]
 
-# (Tùy chọn) Tail logs để debug nhanh trên Cloudflare
+# ✅ Tail logs để debug
 logpush = true
