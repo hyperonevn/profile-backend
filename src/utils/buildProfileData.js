@@ -1,22 +1,24 @@
-export function buildProfileData(result, env) {
-  const CDN = env?.CDN_BASE || "https://cdn.profile.io.vn";
+export function buildProfileData(result = {}, env = {}) {
+  const CDN = env.CDN_BASE || "https://cdn.profile.io.vn";
+
+  const safe = (v) => (v === null || v === undefined ? "" : String(v));
 
   return {
-    full_name: result.name || "",
-    position: result.title || "",
-    company_bold: result.company || "",
-    roles: result.roles || "",
-    intro: result.bio || "",
-    cover: result.cover_path ? `${CDN}/${result.cover_path}` : "",
-    image: result.avatar_path ? `${CDN}/${result.avatar_path}` : "",
-    phone: result.phone || "",
-    location: result.location || "",
-    language: result.language ? result.language.split(",") : [],
+    full_name: safe(result.name),
+    position: safe(result.title),
+    company_bold: safe(result.company),
+    roles: safe(result.roles),
+    intro: safe(result.bio),
+    cover: safe(result.cover_path) ? `${CDN}/${safe(result.cover_path)}` : "",
+    image: safe(result.avatar_path) ? `${CDN}/${safe(result.avatar_path)}` : "",
+    phone: safe(result.phone),
+    location: safe(result.location),
+    language: result.language ? String(result.language).split(",").map((l) => l.trim()) : [],
     socials: {
-      email: result.email || "",
-      facebook: result.facebook || "",
-      zalo: result.zalo || "",
+      email: safe(result.email),
+      facebook: safe(result.facebook),
+      zalo: safe(result.zalo),
     },
-    domain: `${result.subdomain}.profile.io.vn`,
+    domain: safe(result.subdomain) ? `${result.subdomain}.profile.io.vn` : "",
   };
 }
