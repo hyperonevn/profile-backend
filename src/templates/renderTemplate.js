@@ -1,4 +1,3 @@
-// /profile-backend/templates/renderTemplate.js
 export function renderTemplate(profile) {
   const socials = profile.socials || {};
   const languages = profile.language?.length ? profile.language.join(", ") : "";
@@ -68,6 +67,22 @@ export function renderTemplate(profile) {
         font-size: 17px;
         font-weight: 700;
         margin-bottom: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .verified {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        background: url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Twitter_Verified_Badge.svg') no-repeat center;
+        background-size: contain;
+      }
+      .vvip {
+        font-size: 10px;
+        color: gold;
+        margin-left: 4px;
       }
       .sub {
         font-size: 11px;
@@ -158,11 +173,15 @@ export function renderTemplate(profile) {
       <div class="overlay"></div>
       <div class="content">
         <img src="${profile.image}" alt="${profile.roles}" class="avatar" />
-        <h1>${profile.full_name}</h1>
+        <h1>
+          ${profile.full_name}
+          ${profile.verified_account ? '<span class="verified"></span>' : ''}
+          ${profile.is_vvip ? '<span class="vvip">⭐</span>' : ''}
+        </h1>
         <p class="sub">${profile.position}</p>
         <p class="company">${profile.company_bold}</p>
         <p class="roles">${profile.roles}</p>
-        <p class="intro">“${profile.roles}”</p>
+        <p class="intro">“${profile.intro || profile.roles}”</p>
 
         <div class="links">
           <a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>
