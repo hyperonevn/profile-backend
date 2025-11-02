@@ -1,136 +1,104 @@
 // /profile-backend/templates/renderTemplate.js
-export function renderTemplate(profile = {}, env = {}) {
-  // ✅ 1. Chuyển toàn bộ key IN HOA → chữ thường (D1 luôn trả uppercase)
-  const normalized = {};
-  for (const key in profile) normalized[key.toLowerCase()] = profile[key];
-  profile = normalized;
+export function renderTemplate(profile) {
+  const socials = profile.socials || {};
+  const languages = profile.language?.length ? profile.language.join(", ") : "";
 
-  // ✅ 2. Xử lý danh sách ngôn ngữ (JSON string → array)
-  const langs =
-    typeof profile.languages === "string"
-      ? JSON.parse(profile.languages)
-      : Array.isArray(profile.languages)
-      ? profile.languages
-      : [];
-  const languages = langs.length ? `🌐 ${langs.join(", ")}` : "";
-
-  // ✅ 3. Thiết lập CDN & avatar / cover fallback
-  const CDN = env.CDN_BASE || "";
-  const avatarUrl = profile.avatar_path
-    ? `${CDN}/${profile.avatar_path}`
-    : `${CDN}/${profile.subdomain}/avatar.jpg`;
-  const coverUrl = profile.cover_path
-    ? `${CDN}/${profile.cover_path}`
-    : `${CDN}/${profile.subdomain}/cover.jpg`;
-
-  // ✅ 4. HTML render chính
-  return `<!DOCTYPE html>
+  return `
+  <!DOCTYPE html>
   <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>${profile.full_name || "Card Visit"} | ${profile.full_name || ""}</title>
-    <meta name="description" content="${profile.bio_short || ""}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${profile.full_name || profile.name} | ${profile.position}</title>
+    <meta name="description" content="${profile.intro || ''}" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
     <style>
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body {
         font-family: 'Inter', sans-serif;
-        background: #000;
+        background: linear-gradient(180deg, #0d0d0f 0%, #050506 100%);
         color: white;
-        min-height: 100vh;
-        background-image: url('${coverUrl}');
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
+        text-align: center;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        justify-content: flex-start;
-        padding: 40px 16px;
-        position: relative;
+        height: 100vh;
       }
-      body::after {
-        content: "";
+      .phone {
+        position: relative;
+        width: 270px;
+        height: 550px;
+        background: #111;
+        border-radius: 2rem;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      }
+      .cover {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.9));
-        z-index: 0;
+        background-image: url('${profile.cover}');
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.55);
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 80%);
       }
       .content {
         position: relative;
-        z-index: 1;
-        text-align: center;
-        width: 100%;
-        max-width: 360px;
-      }
-      .avatar {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        object-fit: cover;
-        box-shadow: 0 0 15px rgba(255,255,255,0.3);
-        margin-bottom: 12px;
-      }
-      h1 {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 4px;
-      }
-      .bio {
-        font-size: 13px;
-        color: #ddd;
-        margin-bottom: 4px;
-      }
-      .sub {
-        font-size: 13px;
-        color: #ccc;
-        margin-bottom: 2px;
-      }
-      .company {
-        font-size: 13px;
-        font-weight: 700;
-        background: linear-gradient(90deg, #00e1ff, #b77bff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 6px;
-      }
-      .motto {
-        font-size: 12px;
-        color: #eee;
-        font-style: italic;
-        margin: 14px auto 12px auto;
-        max-width: 300px;
-        line-height: 1.5;
-      }
-      .qr {
-        margin: 10px auto 18px auto;
+        z-index: 2;
+        padding: 28px 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        height: 100%;
       }
-      .qr img {
-        width: 110px;
-        height: 110px;
-        border-radius: 12px;
-        background: white;
-        padding: 8px;
-        box-shadow: 0 0 20px rgba(255,255,255,0.35);
+      .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        object-fit: cover;
+        box-shadow: 0 0 15px rgba(255,255,255,0.25);
+        margin-bottom: 10px;
       }
-      .qr p {
+      h1 {
+        font-size: 17px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+      .sub {
+        font-size: 11px;
+        font-weight: 500;
+        color: #ddd;
+        margin-bottom: 3px;
+      }
+      .company {
+        font-size: 11px;
+        color: #ff72c6;
+        font-weight: 600;
+        margin-bottom: 3px;
+      }
+      .roles {
+        font-size: 10px;
+        color: #aaa;
+      }
+      .intro {
         font-size: 10px;
         color: #ccc;
-        letter-spacing: 0.3px;
+        font-style: italic;
+        margin: 10px 0;
+        max-width: 200px;
+        line-height: 1.3;
       }
       .links {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        margin-top: 10px;
+        gap: 6px;
+        margin-top: 8px;
+        width: 100%;
         align-items: center;
       }
       a.link {
@@ -138,111 +106,86 @@ export function renderTemplate(profile = {}, env = {}) {
         align-items: center;
         justify-content: center;
         gap: 6px;
-        width: 260px;
-        padding: 8px;
+        width: 200px;
+        padding: 6px;
         border-radius: 999px;
-        background: rgba(255,255,255,0.12);
+        background: rgba(255,255,255,0.1);
         color: white;
-        font-size: 12px;
+        font-size: 10px;
         text-decoration: none;
-        transition: 0.25s;
+        transition: 0.3s;
       }
-      a.link:hover { background: rgba(255,255,255,0.25); }
+      a.link:hover { background: rgba(255,255,255,0.2); }
       .socials {
         display: flex;
         justify-content: center;
-        gap: 16px;
-        margin: 12px 0;
+        gap: 18px;
+        margin: 12px 0 8px 0;
       }
       .socials img {
-        width: 20px;
-        height: 20px;
-        opacity: 0.9;
-        transition: 0.25s;
+        width: 16px;
+        height: 16px;
+        opacity: 0.85;
+        transition: 0.3s;
       }
-      .socials img:hover { transform: scale(1.1); opacity: 1; }
+      .socials img:hover { transform: scale(1.15); opacity: 1; }
+      .qr {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .qr img {
+        width: 75px;
+        height: 75px;
+        border-radius: 8px;
+        background: white;
+        padding: 4px;
+        box-shadow: 0 0 8px rgba(255,255,255,0.2);
+      }
       footer {
-        position: relative;
-        z-index: 1;
-        font-size: 11px;
-        color: #aaa;
+        margin-top: 4px;
+        font-size: 9px;
+        color: #999;
         text-align: center;
-        margin-top: 20px;
-        line-height: 1.4;
-      }
-      @media (max-width: 480px) {
-        body { padding: 24px 12px; }
-        h1 { font-size: 18px; }
-        .avatar { width: 85px; height: 85px; }
-        a.link { width: 90%; font-size: 13px; }
-        .qr img { width: 95px; height: 95px; }
+        line-height: 1.3;
       }
     </style>
   </head>
   <body>
-    <div class="content">
-      ${avatarUrl ? `<img src="${avatarUrl}" class="avatar" alt="${profile.full_name || ""}"/>` : ""}
-      <h1>${profile.full_name || ""}</h1>
-      ${profile.bio_short ? `<p class="bio">${profile.bio_short}</p>` : ""}
-      ${profile.title ? `<p class="sub">${profile.title}</p>` : ""}
-      ${profile.organization ? `<p class="company">${profile.organization}</p>` : ""}
-      ${profile.intro ? `<p class="motto">${profile.intro}</p>` : ""}
+    <div class="phone">
+      <div class="cover"></div>
+      <div class="overlay"></div>
+      <div class="content">
+        <img src="${profile.image}" alt="${profile.full_name}" class="avatar" />
+        <h1>${profile.full_name}</h1>
+        <p class="sub">${profile.position}</p>
+        <p class="company">${profile.company_bold}</p>
+        <p class="roles">${profile.roles}</p>
+        <p class="intro">“${profile.intro}”</p>
 
-      <div class="qr">
-        ${
-          profile.domain
-            ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${profile.domain}" alt="QR Code" />`
-            : ""
-        }
-        <p>Scan to view profile</p>
+        <div class="links">
+          <a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>
+          ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
+          ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
+        </div>
+
+        <div class="socials">
+          ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"/></a>` : ""}
+          ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"/></a>` : ""}
+        </div>
+
+        <div class="qr">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://${profile.domain}" alt="QR Code" />
+          <p style="font-size:9px;color:#aaa;margin-top:4px;">Quét để xem hồ sơ</p>
+        </div>
+
+        <footer>
+          ${profile.location ? `<p>${profile.location}</p>` : ""}
+          ${languages ? `<p>Ngôn ngữ: ${languages}</p>` : ""}
+          <p>© 2025 HYPER ME</p>
+        </footer>
       </div>
-
-      <div class="links">
-        ${
-          profile.domain
-            ? `<a href="${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>`
-            : ""
-        }
-        ${
-          profile.email
-            ? `<a href="mailto:${profile.email}" class="link">✉️ ${profile.email}</a>`
-            : ""
-        }
-        ${
-          profile.phone
-            ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>`
-            : ""
-        }
-      </div>
-
-      <div class="socials">
-        ${
-          profile.facebook
-            ? `<a href="${profile.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png"/></a>`
-            : ""
-        }
-        ${
-          profile.zalo
-            ? `<a href="https://zalo.me/${profile.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg"/></a>`
-            : ""
-        }
-        ${
-          profile.tiktok
-            ? `<a href="${profile.tiktok}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046125.png"/></a>`
-            : ""
-        }
-        ${
-          profile.instagram
-            ? `<a href="${profile.instagram}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png"/></a>`
-            : ""
-        }
-      </div>
-
-      <footer>
-        ${profile.location ? `<p>${profile.location}</p>` : ""}
-        ${languages ? `<p>${languages}</p>` : ""}
-        <p>© 2025 HYPER ME</p>
-      </footer>
     </div>
   </body>
   </html>`;
