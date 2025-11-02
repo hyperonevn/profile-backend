@@ -1,9 +1,14 @@
 // /profile-backend/templates/renderTemplate.js
-export function renderTemplate(profile = {}) {
+export function renderTemplate(profile = {}, env = {}) {
   const socials = profile.socials || {};
   const languages = Array.isArray(profile.language) && profile.language.length
     ? profile.language.join(", ")
     : "";
+
+  // ✅ CDN_BASE truyền từ env hoặc buildProfileData()
+  const CDN = env.CDN_BASE || "";
+  const avatarUrl = profile.image || (CDN && profile.subdomain ? `${CDN}/users/${profile.subdomain}/avatar.jpg` : "");
+  const coverUrl = profile.cover || (CDN && profile.subdomain ? `${CDN}/users/${profile.subdomain}/cover.jpg` : "");
 
   return `<!DOCTYPE html>
   <html lang="vi">
@@ -37,7 +42,7 @@ export function renderTemplate(profile = {}) {
       .cover {
         position: absolute;
         inset: 0;
-        background-image: url('${profile.cover || ""}');
+        background-image: url('${coverUrl}');
         background-size: cover;
         background-position: center;
         filter: brightness(0.55);
@@ -50,17 +55,12 @@ export function renderTemplate(profile = {}) {
       .content {
         position: relative;
         z-index: 2;
-        padding: 22px 16px;
+        padding: 20px 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
         height: 100%;
-        justify-content: space-between;
-      }
-      .top {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+        justify-content: flex-start;
       }
       .avatar {
         width: 85px;
@@ -68,7 +68,8 @@ export function renderTemplate(profile = {}) {
         border-radius: 50%;
         border: 3px solid #fff;
         object-fit: cover;
-        box-shadow: 0 0 15px rgba(255,255,255,0.25);
+        box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        margin-top: 35px;
         margin-bottom: 8px;
       }
       h1 {
@@ -91,13 +92,13 @@ export function renderTemplate(profile = {}) {
       .roles {
         font-size: 10px;
         color: #aaa;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
       }
       .intro {
         font-size: 10px;
         color: #ccc;
         font-style: italic;
-        margin: 8px 0;
+        margin: 8px 0 10px 0;
         max-width: 200px;
         line-height: 1.4;
       }
@@ -128,7 +129,7 @@ export function renderTemplate(profile = {}) {
         display: flex;
         justify-content: center;
         gap: 18px;
-        margin: 10px 0;
+        margin: 10px 0 18px 0;
       }
       .socials img {
         width: 16px;
@@ -137,27 +138,32 @@ export function renderTemplate(profile = {}) {
         transition: 0.3s;
       }
       .socials img:hover { transform: scale(1.15); opacity: 1; }
+
+      /* ✅ QR nằm chính giữa khung */
       .qr {
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
-        align-items: center;
         justify-content: center;
-        margin: 10px 0;
+        align-items: center;
+        margin-top: 10px;
       }
       .qr img {
-        width: 90px;
-        height: 90px;
+        width: 110px;
+        height: 110px;
         border-radius: 8px;
         background: white;
-        padding: 5px;
-        box-shadow: 0 0 8px rgba(255,255,255,0.2);
+        padding: 6px;
+        box-shadow: 0 0 10px rgba(255,255,255,0.3);
       }
+
       footer {
         font-size: 9px;
         color: #999;
         text-align: center;
         line-height: 1.3;
-        margin-top: 8px;
+        margin-top: 10px;
+        padding-bottom: 8px;
       }
     </style>
   </head>
@@ -166,30 +172,27 @@ export function renderTemplate(profile = {}) {
       <div class="cover"></div>
       <div class="overlay"></div>
       <div class="content">
-        <div class="top">
-          <img src="${profile.image || ""}" alt="${profile.full_name || ""}" class="avatar" />
-          <h1>${profile.full_name || ""}</h1>
-          <p class="sub">${profile.position || ""}</p>
-          <p class="company">${profile.company_bold || ""}</p>
-          <p class="roles">${profile.roles || ""}</p>
-          ${profile.intro ? `<p class="intro">“${profile.intro}”</p>` : ""}
+        ${avatarUrl ? `<img src="${avatarUrl}" alt="${profile.full_name || ""}" class="avatar" />` : ""}
+        <h1>${profile.full_name || ""}</h1>
+        <p class="sub">${profile.position || ""}</p>
+        <p class="company">${profile.company_bold || ""}</p>
+        <p class="roles">${profile.roles || ""}</p>
+        ${profile.intro ? `<p class="intro">“${profile.intro}”</p>` : ""}
+
+        <div class="links">
+          ${profile.domain ? `<a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>` : ""}
+          ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
+          ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
         </div>
 
-        <div class="middle">
-          <div class="links">
-            ${profile.domain ? `<a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>` : ""}
-            ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
-            ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
-          </div>
-          <div class="socials">
-            ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"/></a>` : ""}
-            ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"/></a>` : ""}
-          </div>
+        <div class="socials">
+          ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"/></a>` : ""}
+          ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"/></a>` : ""}
         </div>
 
         <div class="qr">
-          ${profile.domain ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://${profile.domain}" alt="QR Code" />` : ""}
-          <p style="font-size:9px;color:#aaa;margin-top:5px;">Quét để xem hồ sơ</p>
+          ${profile.domain ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://${profile.domain}" alt="QR Code" />` : ""}
+          <p style="font-size:9px;color:#aaa;margin-top:6px;">Quét để xem hồ sơ</p>
         </div>
 
         <footer>
