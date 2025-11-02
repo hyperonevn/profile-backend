@@ -45,25 +45,31 @@ export function renderTemplate(profile = {}) {
       .overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.85) 80%);
+        background: linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.9) 85%);
       }
       .content {
         position: relative;
         z-index: 2;
-        padding: 28px 16px;
+        padding: 22px 16px;
         display: flex;
         flex-direction: column;
         align-items: center;
         height: 100%;
+        justify-content: space-between;
+      }
+      .top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       .avatar {
-        width: 80px;
-        height: 80px;
+        width: 85px;
+        height: 85px;
         border-radius: 50%;
         border: 3px solid #fff;
         object-fit: cover;
         box-shadow: 0 0 15px rgba(255,255,255,0.25);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       h1 {
         font-size: 17px;
@@ -74,31 +80,32 @@ export function renderTemplate(profile = {}) {
         font-size: 11px;
         font-weight: 500;
         color: #ddd;
-        margin-bottom: 3px;
+        margin-bottom: 2px;
       }
       .company {
         font-size: 11px;
         color: #ff72c6;
         font-weight: 600;
-        margin-bottom: 3px;
+        margin-bottom: 4px;
       }
       .roles {
         font-size: 10px;
         color: #aaa;
+        margin-bottom: 6px;
       }
       .intro {
         font-size: 10px;
         color: #ccc;
         font-style: italic;
-        margin: 10px 0;
+        margin: 8px 0;
         max-width: 200px;
-        line-height: 1.3;
+        line-height: 1.4;
       }
       .links {
         display: flex;
         flex-direction: column;
         gap: 6px;
-        margin-top: 8px;
+        margin-top: 6px;
         width: 100%;
         align-items: center;
       }
@@ -121,7 +128,7 @@ export function renderTemplate(profile = {}) {
         display: flex;
         justify-content: center;
         gap: 18px;
-        margin: 12px 0 8px 0;
+        margin: 10px 0;
       }
       .socials img {
         width: 16px;
@@ -131,25 +138,26 @@ export function renderTemplate(profile = {}) {
       }
       .socials img:hover { transform: scale(1.15); opacity: 1; }
       .qr {
-        margin-top: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        margin: 10px 0;
       }
       .qr img {
-        width: 75px;
-        height: 75px;
+        width: 90px;
+        height: 90px;
         border-radius: 8px;
         background: white;
-        padding: 4px;
+        padding: 5px;
         box-shadow: 0 0 8px rgba(255,255,255,0.2);
       }
       footer {
-        margin-top: 4px;
         font-size: 9px;
         color: #999;
         text-align: center;
         line-height: 1.3;
+        margin-top: 8px;
       }
     </style>
   </head>
@@ -158,25 +166,32 @@ export function renderTemplate(profile = {}) {
       <div class="cover"></div>
       <div class="overlay"></div>
       <div class="content">
-        <img src="${profile.image || ""}" alt="${profile.full_name || ""}" class="avatar" />
-        <h1>${profile.full_name || ""}</h1>
-        <p class="sub">${profile.position || ""}</p>
-        <p class="company">${profile.company_bold || ""}</p>
-        <p class="roles">${profile.roles || ""}</p>
-        ${profile.intro ? `<p class="intro">“${profile.intro}”</p>` : ""}
-        <div class="links">
-          ${profile.domain ? `<a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>` : ""}
-          ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
-          ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
+        <div class="top">
+          <img src="${profile.image || ""}" alt="${profile.full_name || ""}" class="avatar" />
+          <h1>${profile.full_name || ""}</h1>
+          <p class="sub">${profile.position || ""}</p>
+          <p class="company">${profile.company_bold || ""}</p>
+          <p class="roles">${profile.roles || ""}</p>
+          ${profile.intro ? `<p class="intro">“${profile.intro}”</p>` : ""}
         </div>
-        <div class="socials">
-          ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"/></a>` : ""}
-          ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"/></a>` : ""}
+
+        <div class="middle">
+          <div class="links">
+            ${profile.domain ? `<a href="https://${profile.domain}" target="_blank" class="link">🌐 ${profile.domain}</a>` : ""}
+            ${socials.email ? `<a href="mailto:${socials.email}" class="link">✉️ ${socials.email}</a>` : ""}
+            ${profile.phone ? `<a href="tel:${profile.phone}" class="link">📞 ${profile.phone}</a>` : ""}
+          </div>
+          <div class="socials">
+            ${socials.facebook ? `<a href="${socials.facebook}" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook"/></a>` : ""}
+            ${socials.zalo ? `<a href="https://zalo.me/${socials.zalo}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo"/></a>` : ""}
+          </div>
         </div>
+
         <div class="qr">
-          ${profile.domain ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https://${profile.domain}" alt="QR Code" />` : ""}
-          <p style="font-size:9px;color:#aaa;margin-top:4px;">Quét để xem hồ sơ</p>
+          ${profile.domain ? `<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://${profile.domain}" alt="QR Code" />` : ""}
+          <p style="font-size:9px;color:#aaa;margin-top:5px;">Quét để xem hồ sơ</p>
         </div>
+
         <footer>
           ${profile.location ? `<p>${profile.location}</p>` : ""}
           ${languages ? `<p>Ngôn ngữ: ${languages}</p>` : ""}
