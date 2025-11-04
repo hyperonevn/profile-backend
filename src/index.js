@@ -1,32 +1,36 @@
 // /src/index.js
+import { Router } from "itty-router";
+
+// Import các route riêng
 import { loadProfile } from "./routes/loadProfile.js";
+import saveProfile from "./routes/saveProfile.js";
+import uploadFile from "./routes/uploadFile.js";
+
+const router = Router();
+
+// ✅ Route kiểm tra đơn giản (GET /)
+router.get("/", () => new Response("🚀 Profile Backend Worker đang hoạt động"));
+
+// ✅ Route tạo mới hồ sơ (POST /save)
+router.post("/save", async (request, env, ctx) => {
+  return await saveProfile.handle(request, env, ctx);
+});
+
+// ✅ Route upload ảnh (POST /upload)
+router.post("/upload", async (request, env, ctx) => {
+  return await uploadFile.handle(request, env, ctx);
+});
+
+// ✅ Route động để hiển thị profile theo subdomain (*.profile.io.vn)
+router.get("*", async (request, env) => {
+  const url = new URL(request.url);
+  const host = url.hostname; // ví dụ: luminhtri.profile.io.vn
+  const subdomain = host.split(".")[0];
+
+  // Gọi loadProfile để render HTML
+  return await loadProfile(request, env, subdomain);
+});
 
 export default {
-  async fetch(request, env, ctx) {
-    try {
-      const url = new URL(request.url);
-      const hostParts = url.hostname.split(".");
-
-      // ✅ Lấy subdomain
-      const subdomain = hostParts.length > 2 ? hostParts[0] : "home";
-
-      // ✅ Kiểm tra binding D1 trước khi gọi
-      if (!env.profile_db) {
-        return new Response(
-          "⚠️ Lỗi cấu hình: env.profile_db không tồn tại. Kiểm tra binding trong wrangler.toml.",
-          { status: 500, headers: { "content-type": "text/plain; charset=UTF-8" } }
-        );
-      }
-
-      // ✅ Gọi router xử lý chính
-      return await loadProfile(request, env, subdomain);
-
-    } catch (error) {
-      console.error("🔥 Worker Error:", error);
-      return new Response(
-        `Lỗi hệ thống: ${error.message}`,
-        { status: 500, headers: { "content-type": "text/plain; charset=UTF-8" } }
-      );
-    }
-  },
+  fetch: (request, env, ctx) => router.handle(request, env, ctx),
 };
