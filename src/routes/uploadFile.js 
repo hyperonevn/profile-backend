@@ -1,0 +1,43 @@
+import { Router } from "itty-router";
+
+const router = Router();
+
+router.post("/upload", async (request, env) => {
+  try {
+    const formData = await request.formData();
+    const file = formData.get("file");
+    const subdomain = formData.get("subdomain");
+
+    if (!file || !subdomain) {
+      return new Response(
+        JSON.stringify({ success: false, message: "Thiếu file hoặc subdomain" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // ✅ Chuẩn hóa tên file và path
+    const fileKey = `users/${subdomain}/avatar.jpg`;
+
+    // ✅ Upload lên R2 (PROFILE_BUCKET)
+    await env.PROFILE_BUCKET.put(fileKey, file.stream(), {
+      httpMetadata: { contentType: file.type },
+    });
+
+    // ✅ Tạo URL public (qua CDN)
+    const fileUrl = `https://cdn.profile.io.vn/${fileKey}`;
+
+    // ✅ Phản hồi lại cho FE
+    return new Response(
+      JSON.stringify({ success: true, fileUrl }),
+      { headers: { "Content-Type": "application/json" } }
+    );
+  } catch (err) {
+    console.error("❌ Upload error:", err);
+    return new Response(
+      JSON.stringify({ success: false, message: err.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+});
+
+export default router;
